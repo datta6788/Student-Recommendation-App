@@ -1,0 +1,61 @@
+student_id,name,maths,science,english,attendance,interest,result
+1,Aarav Sharma,78,82,75,75,AI,0
+2,Ananya Reddy,65,70,68,72,Web Development,1
+3,Rohan Verma,90,88,92,95,Data Science,0
+4,Sneha Patel,55,60,58,65,Cybersecurity,0
+5,Karthik Kumar,72,75,70,80,AI,0
+6,Priya Singh,70,75,50,60,Web Development,0
+7,Aditya Mehta,85,80,78,90,Data Science,0
+8,Neha Gupta,62,65,60,70,Cybersecurity,1
+9,Vikram Rao,88,90,85,93,AI,0
+10,Pooja Iyer,45,50,48,58,Web Development,1
+11,Siddharth Malhotra,70,72,68,78,Data Science,0
+12,Kavya Nair,82,85,80,88,AI,0
+13,Rahul Choudhary,60,62,65,70,Cybersecurity,1
+14,Divya Jain,92,90,94,96,Data Science,0
+15,Arjun Das,55,58,60,68,Web Development,1
+16,Meghana Kulkarni,75,78,72,85,AI,0
+17,Amit Yadav,68,70,65,75,Data Science,0
+18,Swathi Gopal,50,55,52,60,Cybersecurity,1
+19,Nikhil Bansal,88,85,90,92,AI,0
+20,Shreya Agarwal,42,45,48,55,Web Development,1
+21,Manish Pandey,78,80,76,86,Data Science,0
+22,Aishwarya Mishra,65,68,70,74,Cybersecurity,1
+23,Sandeep Khatri,90,92,88,95,AI,0
+24,Ritu Saxena,58,60,62,68,Web Development,1
+25,Varun Kapoor,72,75,78,82,Data Science,0
+26,Bhavya Shah,48,50,52,60,Cybersecurity,1
+27,Pranav Joshi,85,88,84,90,AI,0
+28,Keerthi Ramesh,60,62,65,70,Web Development,1
+29,Akash Tripathi,92,94,90,96,Data Science,0
+30,Nandini Roy,55,58,60,65,Cybersecurity,1
+31,Harsh Vardhan,75,78,72,85,AI,0
+32,Tanvi Deshpande,68,70,65,75,Web Development,0
+33,Mohit Arora,80,82,78,88,Data Science,0
+34,Ishita Sen,50,55,52,60,Cybersecurity,1
+35,Rakesh Pillai,88,85,90,92,AI,0
+36,Anjali Menon,45,48,50,55,Web Development,1
+37,Deepak Soni,78,80,76,86,Data Science,0
+38,Pallavi Kulkarni,62,65,60,70,Cybersecurity,1
+39,Abhishek Tiwari,90,92,88,95,AI,0
+40,Sumanth Reddy,55,58,60,68,Web Development,1
+41,Kunal Khanna,72,75,78,82,Data Science,0
+42,Lakshmi Narayanan,48,50,52,60,Cybersecurity,1
+43,Yash Agarwal,85,88,84,90,AI,0
+44,Chaitanya Kulkarni,60,62,65,70,Web Development,1
+45,Ravi Teja,92,94,90,96,Data Science,0
+46,Monika Bhat,55,58,60,65,Cybersecurity,1
+47,Saurabh Srivastava,75,78,72,85,AI,0
+48,Aparna Rao,68,70,65,75,Web Development,0
+49,Ritesh Mahajan,80,82,78,88,Data Science,0
+50,Sindhu Lakshmi,50,55,52,60,Cybersecurity,1
+51,Naveen Kumar,88,85,90,92,AI,0
+52,Pankaj Singh,45,48,50,55,Web Development,1
+53,Mehul Patel,78,80,76,86,Data Science,0
+54,Shalini Verma,62,65,60,70,Cybersecurity,1
+55,Ashwin Iyer,90,92,88,95,AI,0
+56,Kriti Malhotra,55,58,60,68,Web Development,1
+57,Uday Kiran,72,75,78,82,Data Science,0
+58,Bhavana Shetty,48,50,52,60,Cybersecurity,1
+59,Rahul Mehra,85,88,84,90,AI,0
+60,Ankita Joshi,60,62,65,70,Web Development,1
