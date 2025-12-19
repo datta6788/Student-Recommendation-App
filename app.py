@@ -23,7 +23,7 @@ st.markdown("""
 }
 
 h1, h2, h3 {
-    color: #1f2937;
+    color: red;
 }
 
 p, li, span, label, div {
