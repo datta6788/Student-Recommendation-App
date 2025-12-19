@@ -27,7 +27,7 @@ h1, h2, h3 {
 }
 
 p, li, span, label, div {
-    color: red !important;
+    color: white !important;
 }
 
 .block-container {
