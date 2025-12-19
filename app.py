@@ -18,18 +18,22 @@ st.set_page_config(
 st.markdown("""
 <style>
 .stApp {
-    background-color: lightyellow;
+    background-color: #fffde7; /* soft yellow */
+    color: #1f2937;           /* DARK text */
 }
-h1 {
-    text-align: center;
-    color: black;
+
+h1, h2, h3 {
+    color: #1f2937;
 }
-h2, h3 {
-    color: #2563eb;
+
+p, li, span, label, div {
+    color: #1f2937 !important;
 }
+
 .block-container {
     padding: 2rem;
 }
+
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
 header {visibility: hidden;}
