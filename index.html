@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Risk Analysis Report</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #3a0606 0%, #6d1414d2 100%);
+            min-height: 100vh;
+
+    /* ADD THESE */
+            display: flex;
+            justify-content: center;   /* horizontal center */
+            align-items: center;       /* vertical center */
+
+            padding: 20px;
+        }
+
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        
+
+        .header {
+            background: linear-gradient(135deg, #3a0606 0%, #6d1414d2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .ml-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .student-selector {
+            margin-bottom: 30px;
+            background: #6d1414d2;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .student-selector label {
+            display: block;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .student-selector select {
+            width: 100%;
+            padding: 12px;
+            font-size: 1em;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .student-selector select:focus {
+            outline: none;
+            border-color: #764ba2;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .report-section {
+            display: none;
+        }
+
+        .report-section.active {
+            display: block;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-card h3 {
+            color: #555;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .info-card .value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .info-card.attendance .value {
+            color: #28a745;
+        }
+
+        .info-card.attendance.low .value {
+            color: #dc3545;
+        }
+
+        .chart-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            position: relative;
+            min-height: 400px;
+        }
+
+        .chart-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .chart-container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .chart-loader {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loader-text {
+            color: #667eea;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .chart-container.hidden {
+            display: none;
+        }
+
+        .risk-section {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .risk-section.safe {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+        }
+
+        .risk-section h2 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .ml-prediction-box {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .ml-prediction-box h3 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ml-stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .ml-stat:last-child {
+            border-bottom: none;
+        }
+
+        .ml-stat-label {
+            font-weight: 500;
+        }
+
+        .ml-stat-value {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .risk-meter {
+            background: rgba(255, 255, 255, 0.2);
+            height: 40px;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .risk-fill {
+            height: 100%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #333;
+            transition: width 1s ease;
+        }
+
+        .risk-factors {
+            margin-top: 20px;
+        }
+
+        .risk-factors h3 {
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .risk-factors ul {
+            list-style: none;
+        }
+
+        .risk-factors li {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+        }
+
+        .risk-factors li:before {
+            content: "⚠️";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .risk-impact-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-left: 10px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .impact-high {
+            background: rgba(255, 50, 50, 0.3) !important;
+        }
+
+        .impact-medium {
+            background: rgba(255, 165, 0, 0.3) !important;
+        }
+
+        .suggestions-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 12px;
+        }
+
+        .suggestions-section h2 {
+            color: #333;
+            font-size: 1.8em;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .suggestion-category {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .suggestion-category.priority-critical {
+            border-left-color: #dc3545;
+            background: #fff5f5;
+        }
+
+        .suggestion-category.priority-high {
+            border-left-color: #ff8c00;
+            background: #fff9f0;
+        }
+
+        .suggestion-category h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .suggestion-category.priority-critical h3 {
+            color: #dc3545;
+        }
+
+        .suggestion-category.priority-high h3 {
+            color: #ff8c00;
+        }
+
+        .ml-impact-tag {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            margin-top: 5px;
+            font-weight: 600;
+        }
+
+        .suggestion-category ul {
+            list-style: none;
+        }
+
+        .suggestion-category li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .suggestion-category li:last-child {
+            border-bottom: none;
+        }
+
+        .suggestion-category li:before {
+            content: "✓";
+            color: #28a745;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2em;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 AI-Powered Student Risk Analysis</h1>
+            <p>Machine Learning Based Performance & Attendance Monitoring System</p>
+            <div class="ml-badge">✨ Enhanced with ML Predictions</div>
+        </div>
+
+        <div class="content">
+            <div class="student-selector">
+                <label for="studentSelect">Select Student:</label>
+                <select id="studentSelect">
+                    <option value="">-- Choose a Student --</option>
+                </select>
+            </div>
+
+            <div id="loadingMessage" class="loading" style="display: none;">
+                Loading student data...
+            </div>
+
+            <div id="reportSection" class="report-section">
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3>Student Name</h3>
+                        <div class="value" id="studentName">-</div>
+                    </div>
+                    <div class="info-card attendance" id="attendanceCard">
+                        <h3>Attendance</h3>
+                        <div class="value" id="attendanceValue">-</div>
+                    </div>
+                    <div class="info-card">
+                        <h3>Average Marks</h3>
+                        <div class="value" id="avgMarks">-</div>
+                    </div>
+                    <div class="info-card">
+                        <h3>Interest Area</h3>
+                        <div class="value" style="font-size: 1.3em;" id="interest">-</div>
+                    </div>
+                </div>
+
+                <div class="chart-section">
+                    <h2>📈 Subject-wise Performance</h2>
+                    <div id="chartLoader" class="chart-loader">
+                        <div class="spinner"></div>
+                        <div class="loader-text">Loading chart data...</div>
+                    </div>
+                    <div class="chart-container hidden" id="chartContainer">
+                        <canvas id="marksChart"></canvas>
+                    </div>
+                </div>
+
+                <div id="riskSection" class="risk-section">
+                    <h2>🤖 ML-Based Risk Assessment</h2>
+                    
+                    <div class="ml-prediction-box">
+                        <h3>🎯 AI Predictions</h3>
+                        <div class="ml-stat">
+                            <span class="ml-stat-label">ML Risk Probability:</span>
+                            <span class="ml-stat-value" id="mlRiskProb">0%</span>
+                        </div>
+                        <div class="ml-stat">
+                            <span class="ml-stat-label">Predicted Future Performance:</span>
+                            <span class="ml-stat-value" id="predictedPerf">0%</span>
+                        </div>
+                        <div class="ml-stat">
+                            <span class="ml-stat-label">AI Confidence Score:</span>
+                            <span class="ml-stat-value" id="confidenceScore">0%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="risk-meter">
+                        <div class="risk-fill" id="riskFill">0%</div>
+                    </div>
+                    <div class="risk-factors" id="riskFactors"></div>
+                </div>
+
+                <div class="suggestions-section">
+                    <h2>💡 AI-Powered Improvement Strategies</h2>
+                    <div id="suggestionsContainer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let marksChart = null;
+
+        // Load students on page load
+        async function loadStudents() {
+            try {
+                const response = await fetch('/api/students');
+                const students = await response.json();
+                const select = document.getElementById('studentSelect');
+                
+                students.forEach(student => {
+                    const option = document.createElement('option');
+                    option.value = student.student_id;
+                    option.textContent = `${student.name} (ID: ${student.student_id})`;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading students:', error);
+            }
+        }
+
+        // Load student report
+        async function loadStudentReport(studentId) {
+            if (!studentId) {
+                document.getElementById('reportSection').classList.remove('active');
+                return;
+            }
+
+            document.getElementById('loadingMessage').style.display = 'block';
+            document.getElementById('reportSection').classList.remove('active');
+
+            // Show chart loader and hide chart
+            document.getElementById('chartLoader').style.display = 'flex';
+            document.getElementById('chartContainer').classList.add('hidden');
+
+            try {
+                const response = await fetch(`/api/student/${studentId}`);
+                const data = await response.json();
+                
+                displayReport(data);
+                
+                document.getElementById('loadingMessage').style.display = 'none';
+                document.getElementById('reportSection').classList.add('active');
+            } catch (error) {
+                console.error('Error loading report:', error);
+                document.getElementById('loadingMessage').textContent = 'Error loading report';
+            }
+        }
+
+        function displayReport(data) {
+            // Basic info
+            document.getElementById('studentName').textContent = data.name;
+            document.getElementById('attendanceValue').textContent = `${data.attendance}%`;
+            document.getElementById('avgMarks').textContent = `${data.avg_marks}%`;
+            document.getElementById('interest').textContent = data.interest;
+
+            // Attendance card color
+            const attendanceCard = document.getElementById('attendanceCard');
+            if (data.attendance < 75) {
+                attendanceCard.classList.add('low');
+            } else {
+                attendanceCard.classList.remove('low');
+            }
+
+            // Update chart
+            updateMarksChart(data.marks);
+
+            // ML Predictions
+            document.getElementById('mlRiskProb').textContent = `${data.ml_risk_probability}%`;
+            document.getElementById('predictedPerf').textContent = `${data.predicted_future_performance}%`;
+            document.getElementById('confidenceScore').textContent = `${data.confidence_score}%`;
+
+            // Risk section
+            const riskSection = document.getElementById('riskSection');
+            const riskFill = document.getElementById('riskFill');
+            
+            if (data.is_at_risk) {
+                riskSection.classList.remove('safe');
+                riskSection.style.background = 'linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%)';
+            } else {
+                riskSection.classList.add('safe');
+            }
+
+            riskFill.style.width = `${data.ml_risk_probability}%`;
+            riskFill.textContent = `${data.ml_risk_probability}%`;
+
+            // Risk factors with ML insights
+            const riskFactorsDiv = document.getElementById('riskFactors');
+            if (data.risk_factors && data.risk_factors.length > 0) {
+                const factorsHTML = data.risk_factors.map(factor => {
+                    // Handle both object and string formats
+                    let factorText, impactLevel, mlWeight;
+                    
+                    if (typeof factor === 'object') {
+                        factorText = factor.factor || factor.toString();
+                        impactLevel = factor.impact || 'Medium';
+                        mlWeight = factor.ml_weight || 0;
+                    } else {
+                        factorText = factor;
+                        impactLevel = 'Medium';
+                        mlWeight = 0;
+                    }
+                    
+                    const impactClass = impactLevel === 'High' ? 'impact-high' : 'impact-medium';
+                    return `
+                        <li>
+                            ${factorText}
+                            <span class="risk-impact-badge ${impactClass}">${impactLevel} Impact</span>
+                            <div style="font-size: 0.85em; margin-top: 5px; opacity: 0.9;">
+                                🤖 ML Weight: ${mlWeight.toFixed(1)}%
+                            </div>
+                        </li>
+                    `;
+                }).join('');
+                
+                riskFactorsDiv.innerHTML = `
+                    <h3>⚠️ Risk Factors Identified by AI:</h3>
+                    <ul>${factorsHTML}</ul>
+                `;
+            } else {
+                riskFactorsDiv.innerHTML = '<h3>✅ No significant risk factors identified. Keep up the excellent work!</h3>';
+            }
+
+            // ML-Enhanced Suggestions
+            const suggestionsContainer = document.getElementById('suggestionsContainer');
+            suggestionsContainer.innerHTML = data.suggestions.map(category => {
+                const priorityClass = category.priority ? `priority-${category.priority.toLowerCase()}` : '';
+                return `
+                    <div class="suggestion-category ${priorityClass}">
+                        <h3>${category.category}</h3>
+                        ${category.ml_impact ? `<div class="ml-impact-tag">🤖 ${category.ml_impact}</div>` : ''}
+                        <ul>
+                            ${category.points.map(point => `<li>${point}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateMarksChart(marks) {
+            const ctx = document.getElementById('marksChart').getContext('2d');
+            
+            if (marksChart) {
+                marksChart.destroy();
+            }
+
+            // Simulate loading delay for visual effect
+            setTimeout(() => {
+                marksChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Maths', 'Science', 'English'],
+                        datasets: [{
+                            data: [marks.maths, marks.science, marks.english],
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.8)',
+                                'rgba(54, 162, 235, 0.8)',
+                                'rgba(255, 206, 86, 0.8)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)'
+                            ],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    font: {
+                                        size: 14
+                                    },
+                                    padding: 15
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.label + ': ' + context.parsed + '%';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // Hide loader and show chart
+                document.getElementById('chartLoader').style.display = 'none';
+                document.getElementById('chartContainer').classList.remove('hidden');
+            }, 800); // 800ms delay for loader visibility
+        }
+
+        // Event listener
+        document.getElementById('studentSelect').addEventListener('change', (e) => {
+            loadStudentReport(e.target.value);
+        });
+
+        // Load students on page load
+        loadStudents();
+    </script>
+</body>
+</html>
